@@ -59,6 +59,8 @@ server <- function(input, output) {
     con_df <- sodium::data_decrypt(raw, key) |>
       unserialize()
     
+    print(con_df)
+    
    # tryCatch({
       con(DBI::dbConnect(drv = RPostgres::Postgres(),
                     dbname = con_df$dbname,
