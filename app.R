@@ -1,12 +1,3 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    https://shiny.posit.co/
-#
-
 library(shiny)
 
 # Define UI for application that draws a histogram
@@ -57,15 +48,18 @@ server <- function(input, output) {
   
   # Observe upload of connection file
   observeEvent(input$conn_encrypted, {
+    
     raw <- readRDS(input$conn_encrypted$datapath)
     key <- Sys.getenv("key") |>
       charToRaw() |> 
       sodium::hash()
     
+    print(key)
+    
     con_df <- sodium::data_decrypt(raw, key) |>
       unserialize()
     
-    tryCatch({
+   # tryCatch({
       con(DBI::dbConnect(drv = RPostgres::Postgres(),
                     dbname = con_df$dbname,
                     host = con_df$host,
@@ -75,13 +69,12 @@ server <- function(input, output) {
       
       
       removeModal()
-    },
-    error = function(e){
+   # },
+   # error = function(e){
       
-      print(con_df)
-      showNotification("Unable to resolve host, ensure connection file is valid.  Otherwise, contact Eliot.")
-      shinyjs::reset("pw_upload_fi")
-    })
+  #    showNotification("Unable to resolve host, ensure connection file is valid.  Otherwise, contact Eliot.")
+  #    shinyjs::reset("pw_upload_fi")
+ #   })
     
     
     
